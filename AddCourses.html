@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chapter List</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+  <main>
+    <div class="container mt-5 col-6">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Chapter Name" />
+        <button id="add-btn" class="btn btn-outline-success" type="button">Add</button>
+      </div>
+
+      <ul id="parentList" class="list-group">
+        <h3 class="emptyMsg">Nothing is here. Please Add a chapter.</h3>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    let addBtn = document.getElementById("add-btn");
+    let parentList = document.getElementById("parentList");
+
+    addBtn.addEventListener("click", function () {
+      let input = document.querySelector("input");
+      let chapterName = input.value.trim(); // Extra spaces hatao
+
+      if (chapterName === "") {
+        alert("Please enter a chapter name.");
+        return;
+      }
+
+      // Remove empty message if it's there
+      let firstChild = parentList.children[0];
+      if (firstChild && firstChild.classList.contains("emptyMsg")) {
+        firstChild.remove();
+      }
+
+      // Create new li
+      let newLi = document.createElement("li");
+      newLi.className = "list-group-item d-flex";
+
+      newLi.innerHTML = `
+        <h3 class="flex-grow-1">${chapterName}</h3>
+        <button class="btn btn-warning mx-3" onclick="editChapter(this)">Edit</button>
+        <button class="btn btn-danger" onclick="removeChapter(this)">Remove</button>
+      `;
+
+      parentList.appendChild(newLi);
+      input.value = ""; // clear input
+    });
+
+    function removeChapter(currentElement) {
+      currentElement.parentElement.remove();
+
+      if (parentList.children.length === 0) {
+        let emptyMsg = document.createElement("h3");
+        emptyMsg.className = "emptyMsg";
+        emptyMsg.textContent = "Nothing is here. Please Add a chapter.";
+        parentList.appendChild(emptyMsg);
+      }
+    }
+
+    function editChapter(currentElement) {
+      if (currentElement.textContent === "Done") {
+        currentElement.textContent = "Edit";
+        let inputField = currentElement.previousElementSibling;
+        let newHeading = document.createElement("h3");
+        newHeading.className = "flex-grow-1";
+        newHeading.textContent = inputField.value;
+
+        currentElement.parentElement.replaceChild(newHeading, inputField);
+      } else {
+        currentElement.textContent = "Done";
+        let currentHeading = currentElement.previousElementSibling;
+        let input = document.createElement("input");
+        input.type = "text";
+        input.className = "form-control";
+        input.value = currentHeading.textContent;
+
+        currentElement.parentElement.replaceChild(input, currentHeading);
+      }
+    }
+  </script>
+</body>
+</html>
